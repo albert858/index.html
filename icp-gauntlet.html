@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The ICP Gauntlet - Answer These Questions. Most Founders Can't.</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;600&display=swap');
+        
+        :root {
+            --bg: #0a0a0a;
+            --text: #f5f5f5;
+            --accent: #ff4d00;
+            --accent-dim: #ff4d0022;
+            --border: #2a2a2a;
+            --input-bg: #151515;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Landing Page */
+        .landing {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .landing::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, var(--accent-dim) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--accent-dim) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .landing-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        
+        .highlight {
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #999;
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+        
+        .price {
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 18px 48px;
+            font-size: 1.1rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            background: #ff6d20;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 77, 0, 0.3);
+        }
+        
+        .bullets {
+            list-style: none;
+            margin: 3rem 0;
+            padding-left: 0;
+        }
+        
+        .bullets li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+            color: #ccc;
+        }
+        
+        .bullets li::before {
+            content: '→';
+            color: var(--accent);
+            margin-right: 12px;
+            font-weight: 600;
+        }
+        
+        /* Question Flow */
+        .question-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .progress {
+            background: var(--border);
+            height: 4px;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: var(--accent);
+            height: 100%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .question-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .question-subtitle {
+            color: #999;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+        
+        .input-group {
+            margin-bottom: 2rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .example {
+            background: var(--accent-dim);
+            border-left: 3px solid var(--accent);
+            padding: 12px 16px;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+        }
+        
+        .example-label {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .radio-group,
+        .checkbox-group {
+            margin: 1.5rem 0;
+        }
+        
+        .radio-option,
+        .checkbox-option {
+            display: block;
+            padding: 16px;
+            background: var(--input-bg);
+            border: 2px solid var(--border);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .radio-option:hover,
+        .checkbox-option:hover {
+            border-color: var(--accent);
+        }
+        
+        .radio-option.selected,
+        .checkbox-option.selected {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+        
+        .radio-option input,
+        .checkbox-option input {
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: transparent;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Results Page */
+        .results {
+            padding: 3rem 0;
+        }
+        
+        .results-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .results-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            margin-bottom: 1rem;
+        }
+        
+        .results-section {
+            background: var(--input-bg);
+            border-left: 4px solid var(--accent);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .results-section h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        
+        .results-content {
+            color: #ccc;
+            line-height: 1.8;
+        }
+        
+        .results-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .results-content li {
+            padding: 0.5rem 0;
+        }
+        
+        .results-content li::before {
+            content: '•';
+            color: var(--accent);
+            margin-right: 12px;
+            font-weight: 600;
+        }
+        
+        .action-box {
+            background: var(--accent-dim);
+            border: 2px solid var(--accent);
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .action-box h4 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-box ol {
+            padding-left: 1.5rem;
+            line-height: 1.8;
+        }
+        
+        .download-section {
+            text-align: center;
+            margin: 4rem 0;
+        }
+        
+        .error-message {
+            background: #ff4d0022;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 16px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Access Gate */
+        .access-gate {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .access-box {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .access-box h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .access-box input {
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing" class="landing">
+        <div class="container landing-content">
+            <h1>Answer These <span class="highlight">12 Questions.</span><br>Most Founders Can't.</h1>
+            
+            <p class="subtitle">Investors say your ICP is too broad. Your advisors tell you to niche down. But nobody tells you HOW. This tool doesn't give you answers — it asks the questions you've been avoiding.</p>
+            
+            <ul class="bullets">
+                <li>Built MVP, struggling to find product-market fit</li>
+                <li>Investors saying "your ICP is too broad"</li>
+                <li>Talking to everyone, converting nobody</li>
+                <li>Need clarity on who to sell to (and who to reject)</li>
+            </ul>
+            
+            <div style="margin-top: 4rem;">
+                <div class="price">₹749</div>
+                <button class="btn" onclick="showAccessGate()">Get ICP Clarity</button>
+                <p style="margin-top: 1rem; color: #666; font-size: 0.85rem;">Socratic questions. Adaptive flow. Brutal honesty. Download PDF summary.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Gate -->
+    <div id="accessGate" class="access-gate hidden">
+        <div class="container">
+            <div class="access-box">
+                <h2>Enter Access Code</h2>
+                <p style="color: #999; margin-bottom: 2rem;">After payment, you'll receive an access code. Enter it below to start the gauntlet.</p>
+                
+                <input type="text" id="accessCode" placeholder="Enter your access code" style="width: 100%;">
+                <div id="accessError" class="error-message hidden">Invalid access code. Check your email or contact support.</div>
+                
+                <button class="btn" onclick="checkAccess()" style="margin-top: 1.5rem; width: 100%;">Start the Gauntlet</button>
+                
+                <p style="margin-top: 2rem; color: #666; font-size: 0.85rem;">
+                    Don't have a code? 
+                    <a href="#" onclick="showLanding()" style="color: var(--accent);">Go back to purchase</a>
+                </p>
+                
+                <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                    <p style="color: #999; font-size: 0.85rem; margin-bottom: 1rem;">For testing purposes, use:</p>
+                    <code style="background: var(--bg); padding: 8px 16px; display: inline-block; color: var(--accent);">TEST123</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Flow -->
+    <div id="questionFlow" class="container hidden">
+        <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+        
+        <!-- Questions will be dynamically inserted here -->
+        <div id="questionsContainer"></div>
+        
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" style="display: none;">← Previous</button>
+            <button class="btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+        </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="results" class="container hidden">
+        <div class="results">
+            <div class="results-header">
+                <h1 class="results-title">Your ICP Analysis</h1>
+                <p style="color: #999;">Based on your answers, here's what you need to know.</p>
+            </div>
+            
+            <div id="resultsContent"></div>
+            
+            <div class="download-section">
+                <button class="btn" onclick="generatePDF()">Download PDF Summary</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Question Data
+        const questions = [
+            {
+                id: 'q1',
+                section: 'Section 1: Who',
+                title: 'Name your last 3 paying customers (or people in trial who\'ve agreed to pay).',
+                subtitle: 'Format: First name + sharp context (NOT their job title)',
+                type: 'multiple-text',
+                count: 3,
+                placeholder: '✅ "Sarah, who\'s scaling a team for the first time and drowning in Slack chaos"\n❌ "John, VP of Marketing at a SaaS company"',
+                required: true,
+                branchLogic: (answers) => {
+                    const hasAll = answers.q1 && answers.q1.filter(a => a.trim().length > 10).length === 3;
+                    return hasAll ? 'q2b' : 'q1a';
+                }
+            },
+            {
+                id: 'q1a',
+                section: 'Section 1: Who',
+                title: 'Name 3 people you\'ve talked to in the last 2 weeks who have this problem badly enough to pay.',
+                subtitle: 'Same format: First name + sharp context',
+                type: 'multiple-text',
+                count: 3,
+                placeholder: 'e.g., "Alex, running a 10-person agency and manually tracking everything in spreadsheets"',
+                required: true,
+                next: 'q2b'
+            },
+            {
+                id: 'q2b',
+                section: 'Section 1: Who',
+                title: (answers) => {
+                    const names = (answers.q1 || answers.q1a || []).map(a => a.split(',')[0]).filter(n => n).join(', ');
+                    return `Look at ${names || 'the 3 people you named'} - what do they have in common that ISN'T their role?`;
+                },
+                subtitle: 'Think: life stage, constraints, recent trigger event, belief system, tools they already use...',
+                type: 'textarea',
+                placeholder: 'e.g., "They\'re all first-time managers who were just promoted and are overwhelmed..."',
+                required: true,
+                next: 'q3'
+            },
+            {
+                id: 'q3',
+                section: 'Section 2: Disqualification',
+                title: 'Describe 3 people who LOOK like your ICP but would be terrible customers.',
+                subtitle: 'Same format: Name + sharp context',
+                type: 'multiple-text',
+                count: 3,
+                placeholder: 'e.g., "Tom, a VP of Eng who needs enterprise compliance and a dedicated CSM"',
+                required: true,
+                next: 'q4'
+            },
+            {
+                id: 'q4',
+                section: 'Section 2: Disqualification',
+                title: 'What\'s the smallest true thing about your best customers that instantly disqualifies these lookalikes?',
+                subtitle: '',
+                type: 'textarea',
+                placeholder: 'e.g., "They\'ve been personally burned by this problem" / "They have direct budget authority" / "They\'re already using 2+ workarounds"',
+                required: true,
+                branchLogic: (answers) => {
+                    const answer = (answers.q4 || '').toLowerCase();
+                    const vague = ['care', 'want', 'need', 'like', 'motivated', 'serious', 'quality'].some(word => answer.includes(word));
+                    return vague && answer.length < 100 ? 'q4a' : 'q5';
+                }
+            },
+            {
+                id: 'q4a',
+                section: 'Section 2: Disqualification',
+                title: 'Be honest with yourself - "cares about X" isn\'t disqualifying. What do they DO, HAVE, or BELIEVE that others don\'t?',
+                subtitle: 'Try again with specificity',
+                type: 'textarea',
+                placeholder: 'Get specific. What action, possession, or belief separates them?',
+                required: true,
+                next: 'q5'
+            },
+            {
+                id: 'q5',
+                section: 'Section 3: Problem Validation',
+                title: 'What does it cost your ICP to NOT solve this problem?',
+                subtitle: '',
+                type: 'multiple-inputs',
+                inputs: [
+                    { label: 'Time (hours wasted per week)', name: 'time', type: 'number' },
+                    { label: 'Money (dollar/rupee amount per month)', name: 'money', type: 'number' },
+                    { label: 'Opportunity (specific risk or missed upside)', name: 'opportunity', type: 'text' }
+                ],
+                required: true,
+                next: 'q6'
+            },
+            {
+                id: 'q6',
+                section: 'Section 3: Problem Validation',
+                title: (answers) => {
+                    const names = (answers.q1 || answers.q1a || []).map(a => a.split(',')[0]).filter(n => n);
+                    return `For each person (${names.join(', ')}) - what were they doing BEFORE you? What did they try that failed? What workarounds were they using?`;
+                },
+                subtitle: 'Example: "Before toothbrushes, South Indians used neem sticks to clean teeth"',
+                type: 'multiple-text',
+                count: 3,
+                placeholder: 'Describe their previous attempts and workarounds...',
+                required: true,
+                branchLogic: (answers) => {
+                    const hasEmpty = (answers.q6 || []).some(a => !a.trim() || a.toLowerCase().includes('nothing'));
+                    return hasEmpty ? 'q6a' : 'q7';
+                }
+            },
+            {
+                id: 'q6a',
+                section: 'Section 3: Problem Validation',
+                title: 'Be genuine - if they genuinely haven\'t tried anything, why would they pay you?',
+                subtitle: 'Maybe the problem isn\'t painful enough, or maybe you haven\'t dug deep enough into what they\'re actually doing.',
+                type: 'textarea',
+                placeholder: 'Reflect on this...',
+                required: true,
+                next: 'q7'
+            },
+            {
+                id: 'q7',
+                section: 'Section 3: Problem Validation',
+                title: 'In their exact words (not yours), what would make this problem disappear?',
+                subtitle: 'Use their language, not founder-speak',
+                type: 'textarea',
+                placeholder: 'Quote or paraphrase what they actually said...',
+                required: true,
+                next: 'q8'
+            },
+            {
+                id: 'q8',
+                section: 'Section 4: Pattern Proof',
+                title: 'Pick ONE of the 3 people you named - your most perfect customer. Does this person check all four boxes?',
+                subtitle: '',
+                type: 'checklist-radio',
+                options: [
+                    '✅ Problem Fit: They have the problem acutely right now',
+                    '✅ Solution Fit: Your product actually solves it (not "will solve it someday")',
+                    '✅ Founder Fit: You uniquely understand their world',
+                    '✅ Profitable Fit: They\'ll pay enough to make your business work'
+                ],
+                radioOptions: [
+                    'All 4 boxes checked',
+                    'Missing 1-2',
+                    'Missing 3+'
+                ],
+                required: true,
+                branchLogic: (answers) => {
+                    const answer = answers.q8?.radio;
+                    if (answer === 'All 4 boxes checked') return 'q9';
+                    if (answer === 'Missing 1-2') return 'q8a';
+                    return 'q8b';
+                }
+            },
+            {
+                id: 'q8a',
+                section: 'Section 4: Pattern Proof',
+                title: 'Which boxes are missing?',
+                subtitle: 'This is what you need to fix before you have a real ICP.',
+                type: 'textarea',
+                placeholder: 'Describe which boxes are missing and why...',
+                required: true,
+                next: 'q9'
+            },
+            {
+                id: 'q8b',
+                section: 'Section 4: Pattern Proof',
+                title: 'This person isn\'t your ICP.',
+                subtitle: 'You need to find someone who checks all 4 boxes. Go back to Q1 and pick someone else, or rethink your product.',
+                type: 'textarea',
+                placeholder: 'What are you going to do differently?',
+                required: true,
+                next: 'q9'
+            },
+            {
+                id: 'q9',
+                section: 'Section 4: Pattern Proof',
+                title: 'Describe this perfect customer in one sentence: their context, their problem, and why you\'re uniquely positioned to help them.',
+                subtitle: 'This becomes your ICP statement',
+                type: 'textarea',
+                placeholder: 'One sentence. Make it count.',
+                required: true,
+                next: 'results'
+            }
+        ];
+
+        // State Management
+        let currentQuestionIndex = 0;
+        let answers = {};
+        let questionPath = ['q1'];
+        let userData = { hasAccess: false };
+
+        // Access Control
+        const validCodes = ['TEST123', 'PAID001', 'PAID002', 'PAID003']; // You'll add more manually
+
+        function showAccessGate() {
+            document.getElementById('landing').classList.add('hidden');
+            document.getElementById('accessGate').classList.remove('hidden');
+        }
+
+        function showLanding() {
+            document.getElementById('accessGate').classList.add('hidden');
+            document.getElementById('landing').classList.remove('hidden');
+        }
+
+        function checkAccess() {
+            const code = document.getElementById('accessCode').value.trim().toUpperCase();
+            const errorDiv = document.getElementById('accessError');
+            
+            if (validCodes.includes(code)) {
+                userData.hasAccess = true;
+                userData.accessCode = code;
+                document.getElementById('accessGate').classList.add('hidden');
+                document.getElementById('questionFlow').classList.remove('hidden');
+                renderQuestion();
+            } else {
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        // Question Rendering
+        function renderQuestion() {
+            const questionId = questionPath[currentQuestionIndex];
+            const question = questions.find(q => q.id === questionId);
+            if (!question) return;
+
+            const container = document.getElementById('questionsContainer');
+            let html = `
+                <div class="question-section active">
+                    <div class="section-title">${question.section}</div>
+                    <h2 class="question-title">${typeof question.title === 'function' ? question.title(answers) : question.title}</h2>
+                    ${question.subtitle ? `<p class="question-subtitle">${question.subtitle}</p>` : ''}
+            `;
+
+            if (question.type === 'multiple-text') {
+                for (let i = 0; i < question.count; i++) {
+                    html += `
+                        <div class="input-group">
+                            <label>Person ${i + 1}</label>
+                            <input type="text" id="answer_${i}" value="${answers[questionId]?.[i] || ''}" placeholder="${question.placeholder}">
+                        </div>
+                    `;
+                }
+                if (question.placeholder) {
+                    html += `<div class="example"><div class="example-label">Examples:</div>${question.placeholder.replace(/\n/g, '<br>')}</div>`;
+                }
+            } else if (question.type === 'textarea') {
+                html += `
+                    <div class="input-group">
+                        <textarea id="answer_0" placeholder="${question.placeholder}">${answers[questionId] || ''}</textarea>
+                    </div>
+                `;
+            } else if (question.type === 'multiple-inputs') {
+                question.inputs.forEach((input, i) => {
+                    html += `
+                        <div class="input-group">
+                            <label>${input.label}</label>
+                            <input type="${input.type}" id="answer_${i}" name="${input.name}" value="${answers[questionId]?.[input.name] || ''}" placeholder="${input.label}">
+                        </div>
+                    `;
+                });
+            } else if (question.type === 'checklist-radio') {
+                html += '<div class="checkbox-group">';
+                question.options.forEach(opt => {
+                    html += `<div style="padding: 12px 0; color: #ccc;">${opt}</div>`;
+                });
+                html += '</div><div class="radio-group">';
+                question.radioOptions.forEach((opt, i) => {
+                    const selected = answers[questionId]?.radio === opt ? 'selected' : '';
+                    html += `
+                        <label class="radio-option ${selected}" onclick="selectRadio('${questionId}', '${opt}', this)">
+                            <input type="radio" name="${questionId}" value="${opt}" ${selected ? 'checked' : ''}>
+                            ${opt}
+                        </label>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+
+            // Update progress
+            const progress = ((currentQuestionIndex + 1) / questionPath.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            // Update nav buttons
+            document.getElementById('prevBtn').style.display = currentQuestionIndex > 0 ? 'block' : 'none';
+        }
+
+        function selectRadio(questionId, value, element) {
+            document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            if (!answers[questionId]) answers[questionId] = {};
+            answers[questionId].radio = value;
+        }
+
+        function saveCurrentAnswer() {
+            const questionId = questionPath[currentQuestionIndex];
+            const question = questions.find(q => q.id === questionId);
+
+            if (question.type === 'multiple-text') {
+                answers[questionId] = [];
+                for (let i = 0; i < question.count; i++) {
+                    const val = document.getElementById(`answer_${i}`)?.value || '';
+                    answers[questionId].push(val);
+                }
+            } else if (question.type === 'textarea') {
+                answers[questionId] = document.getElementById('answer_0')?.value || '';
+            } else if (question.type === 'multiple-inputs') {
+                answers[questionId] = {};
+                question.inputs.forEach((input, i) => {
+                    answers[questionId][input.name] = document.getElementById(`answer_${i}`)?.value || '';
+                });
+            }
+            // checklist-radio already saved via selectRadio
+        }
+
+        function nextQuestion() {
+            saveCurrentAnswer();
+            
+            const questionId = questionPath[currentQuestionIndex];
+            const question = questions.find(q => q.id === questionId);
+            
+            // Determine next question
+            let nextId;
+            if (question.branchLogic) {
+                nextId = question.branchLogic(answers);
+            } else {
+                nextId = question.next;
+            }
+
+            if (nextId === 'results') {
+                showResults();
+                return;
+            }
+
+            // Add to path if not already there
+            if (!questionPath.includes(nextId)) {
+                questionPath.push(nextId);
+            }
+            
+            currentQuestionIndex++;
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        // Results Generation
+        function showResults() {
+            document.getElementById('questionFlow').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+            
+            const container = document.getElementById('resultsContent');
+            const fitStatus = answers.q8?.radio;
+            
+            let html = '';
+
+            // ICP Definition
+            html += `
+                <div class="results-section">
+                    <h3>Your ICP Definition</h3>
+                    <div class="results-content">
+                        <p><strong>${answers.q9 || 'Not completed'}</strong></p>
+                    </div>
+                </div>
+            `;
+
+            // The Pattern
+            html += `
+                <div class="results-section">
+                    <h3>The Pattern</h3>
+                    <div class="results-content">
+                        <p>${answers.q2b || 'Not identified'}</p>
+                    </div>
+                </div>
+            `;
+
+            // Disqualification Filter
+            html += `
+                <div class="results-section">
+                    <h3>Disqualification Filter</h3>
+                    <div class="results-content">
+                        <p><strong>The smallest true thing:</strong> ${answers.q4 || answers.q4a || 'Not defined'}</p>
+                        <p style="margin-top: 1rem;"><strong>Red flag personas:</strong></p>
+                        <ul>
+                            ${(answers.q3 || []).map(p => `<li>${p}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Problem in Customer Language
+            html += `
+                <div class="results-section">
+                    <h3>Problem in Customer Language</h3>
+                    <div class="results-content">
+                        <p>"${answers.q7 || 'Not captured'}"</p>
+                    </div>
+                </div>
+            `;
+
+            // Four-Fit Validation
+            html += `
+                <div class="results-section">
+                    <h3>The Four-Fit Validation</h3>
+                    <div class="results-content">
+                        <p><strong>Status:</strong> ${fitStatus || 'Not assessed'}</p>
+                        ${answers.q8a ? `<p><strong>Missing:</strong> ${answers.q8a}</p>` : ''}
+                        ${answers.q8b ? `<p><strong>Action needed:</strong> ${answers.q8b}</p>` : ''}
+                    </div>
+                </div>
+            `;
+
+            // Economic Proof
+            if (answers.q5) {
+                html += `
+                    <div class="results-section">
+                        <h3>Economic Proof</h3>
+                        <div class="results-content">
+                            <ul>
+                                <li><strong>Time cost:</strong> ${answers.q5.time || 0} hours/week wasted</li>
+                                <li><strong>Money cost:</strong> ₹${answers.q5.money || 0}/month</li>
+                                <li><strong>Opportunity cost:</strong> ${answers.q5.opportunity || 'Not specified'}</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // The Honest Mirror - Adaptive ending based on performance
+            if (fitStatus === 'All 4 boxes checked') {
+                html += `
+                    <div class="action-box">
+                        <h4>You have ICP clarity. Most founders don't.</h4>
+                        <p style="margin: 1rem 0;">Here's what you do next:</p>
+                        <ol>
+                            <li><strong>Test it ruthlessly</strong> - Show this one-sentence ICP to 5 people who know your market. If they immediately name 3 companies/people who fit, you nailed it.</li>
+                            <li><strong>Say NO</strong> - Turn down the next customer who doesn't match. This is the real test.</li>
+                            <li><strong>Rewrite everything</strong> - Your homepage, pitch deck, cold emails - speak ONLY to this person. Watch what happens.</li>
+                        </ol>
+                        <p style="margin-top: 1.5rem; color: #ccc;">Download your ICP summary. Share it with your team. Pin it above your desk.</p>
+                        <p style="margin-top: 1rem; font-style: italic;">The hard part isn't finding your ICP. It's having the discipline to stick to it.</p>
+                    </div>
+                `;
+            } else if (fitStatus === 'Missing 1-2') {
+                const missing = answers.q8a || 'some boxes';
+                html += `
+                    <div class="action-box">
+                        <h4>You're close, but not there yet.</h4>
+                        <p style="margin: 1rem 0;"><strong>The boxes you're missing:</strong> ${missing}</p>
+                        <p style="margin: 1rem 0;">This means you need to:</p>
+                        <ul style="list-style: disc; padding-left: 2rem; line-height: 1.8;">
+                            <li>Go talk to 10 more people who match your description. If fewer than 7 say "holy shit yes I need this", your problem isn't sharp enough.</li>
+                            <li>Make sure your product actually solves the problem, or change your ICP to match what you built.</li>
+                            <li>Find customers where YOUR unique background is the unfair advantage.</li>
+                            <li>Either raise prices or find customers with bigger budgets.</li>
+                        </ul>
+                        <p style="margin-top: 1.5rem; font-weight: 600;">Run this tool again in 2 weeks. You're not done.</p>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="action-box">
+                        <h4>Hard truth: You don't have an ICP yet.</h4>
+                        <p style="margin: 1rem 0;">This isn't a messaging problem. This is a product-market fit problem.</p>
+                        <p style="margin: 1rem 0;"><strong>What you need to do:</strong></p>
+                        <ol>
+                            <li><strong>Stop selling</strong> - You're wasting time on the wrong people</li>
+                            <li><strong>Go deep with 20 conversations</strong> - Find ONE person who checks all 4 boxes</li>
+                            <li><strong>Run this tool again</strong> when you find them</li>
+                        </ol>
+                        <p style="margin-top: 1.5rem; font-style: italic;">Until you have that one perfect customer, you're guessing. And guessing is expensive.</p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // PDF Generation
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            let y = 20;
+            
+            // Title
+            doc.setFontSize(20);
+            doc.text('Your ICP Analysis', 20, y);
+            y += 15;
+            
+            // ICP Statement
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('Your ICP Definition:', 20, y);
+            y += 7;
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(10);
+            const icpText = doc.splitTextToSize(answers.q9 || 'Not completed', 170);
+            doc.text(icpText, 20, y);
+            y += (icpText.length * 5) + 10;
+            
+            // Pattern
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('The Pattern:', 20, y);
+            y += 7;
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(10);
+            const patternText = doc.splitTextToSize(answers.q2b || 'Not identified', 170);
+            doc.text(patternText, 20, y);
+            y += (patternText.length * 5) + 10;
+            
+            // Disqualifier
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('Disqualification Filter:', 20, y);
+            y += 7;
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(10);
+            const disqualText = doc.splitTextToSize(answers.q4 || answers.q4a || 'Not defined', 170);
+            doc.text(disqualText, 20, y);
+            y += (disqualText.length * 5) + 10;
+            
+            // Problem
+            if (y > 250) {
+                doc.addPage();
+                y = 20;
+            }
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('Problem in Customer Language:', 20, y);
+            y += 7;
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(10);
+            const problemText = doc.splitTextToSize(answers.q7 || 'Not captured', 170);
+            doc.text(problemText, 20, y);
+            y += (problemText.length * 5) + 10;
+            
+            // Status
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('Four-Fit Status:', 20, y);
+            y += 7;
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(10);
+            doc.text(answers.q8?.radio || 'Not assessed', 20, y);
+            
+            // Save
+            doc.save('icp-analysis.pdf');
+        }
+
+        // Initialize
+        window.onload = () => {
+            // Check if there's an access code in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            if (code && validCodes.includes(code.toUpperCase())) {
+                userData.hasAccess = true;
+                userData.accessCode = code;
+                document.getElementById('landing').classList.add('hidden');
+                document.getElementById('questionFlow').classList.remove('hidden');
+                renderQuestion();
+            }
+        };
+    </script>
+</body>
+</html>
